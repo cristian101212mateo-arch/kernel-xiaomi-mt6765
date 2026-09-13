@@ -717,7 +717,7 @@ static SIMPLE_DEV_PM_OPS(mt_charger_pm_ops, mt_charger_suspend,
 	mt_charger_resume);
 
 static const struct of_device_id mt_charger_match[] = {
-	{ .compatible = "mediatek,mt-charger", },
+	{ .compatible = "mediatek,mt6357-charger-type", },
 	{ },
 };
 static struct platform_driver mt_charger_driver = {

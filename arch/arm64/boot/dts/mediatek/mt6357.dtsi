@@ -277,3 +277,11 @@
 	};	/* End of ldo_regulators */
 };/* End of main_pmic */
 
+&main_pmic {
+        mtk_charger_type: mtk_charger_type {
+                compatible = "mediatek,mt6357-charger-type";
+                io-channels = <&pmic_auxadc AUXADC_VCDT>;
+                io-channel-names = "pmic_vbus";
+                bc12_active = <1>;
+        };
+};
