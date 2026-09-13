@@ -156,10 +156,20 @@ static void _set_vbus(int is_on)
 		DBG(0, "vbus_init<%d>\n", vbus_on);
 
 		primary_charger = get_charger_by_name("primary_chg");
-		if (!primary_charger) {
-			DBG(0, "get primary charger device failed\n");
-			return;
-	}
+            if (!primary_charger)
+                    primary_charger = get_charger_by_name("mt6370_pmu_charger");
+            if (!primary_charger)
+                    primary_charger = get_charger_by_name("mtk_charger");
+            if (!primary_charger)
+                    primary_charger = get_charger_by_name("charger");
+
+            if (!primary_charger) {
+                    DBG(0, "no charger found, PMIC direct\n");
+                    set_chr_enable_otg(0x1);
+                    set_chr_boost_current_limit(1200);
+            } else {
+                    DBG(0, "primary charger found\n");
+            }
 	}
 #endif
 #endif
@@ -172,9 +182,14 @@ static void _set_vbus(int is_on)
 		vbus_on = true;
 #ifdef CONFIG_MTK_CHARGER
 #if CONFIG_MTK_GAUGE_VERSION == 30
-		charger_dev_enable_otg(primary_charger, true);
+		if (primary_charger) {
+		        charger_dev_enable_otg(primary_charger, true);
     DBG(0, "lct _setvbus charger_dev_enable_otg\n");
-		charger_dev_set_boost_current_limit(primary_charger, 1200000);
+		        charger_dev_set_boost_current_limit(primary_charger, 1200000);
+		} else {
+		        set_chr_enable_otg(0x1);
+		        set_chr_boost_current_limit(1200);
+		}
 #else
 		set_chr_enable_otg(0x1);
 		set_chr_boost_current_limit(1200);
@@ -188,8 +203,12 @@ static void _set_vbus(int is_on)
 
 #ifdef CONFIG_MTK_CHARGER
 #if CONFIG_MTK_GAUGE_VERSION == 30
-		charger_dev_enable_otg(primary_charger, false);
+		if (primary_charger) {
+		        charger_dev_enable_otg(primary_charger, false);
     DBG(0, "lct _setvbus charger_dev_disable_otg\n");
+		} else {
+		        set_chr_enable_otg(0x0);
+		}
 #else
 		set_chr_enable_otg(0x0);
 #endif
