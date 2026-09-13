@@ -11,8 +11,16 @@
  * GNU General Public License for more details.
  */
 
-/ {
-	mt6370_pmu: mt6370_pmu_dts {
+
+#include <dt-bindings/interrupt-controller/irq.h>
+
+&i2c6 {
+	mt6370_pmu: mt6370_pmu@34 {
+                compatible = "mediatek,mt6370_pmu";
+                reg = <0x34>;
+                status = "okay";
+                interrupt-parent = <&pio>;
+                interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
 		interrupt-controller;
 		#interrupt-cells = <1>;
 		mt6370,intr_gpio_num = <3>; /* direct defined GPIO num */
